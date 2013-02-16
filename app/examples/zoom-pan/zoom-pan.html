@@ -4,130 +4,91 @@
 <head>
 <meta charset="utf-8">
 <style>
-
-body {
-  background: #4d4d4d;
-  color: white;
-  font: 10px sans-serif;
-}
-
-
-svg.chart .background {
-  fill: #4d4d4d;
-}
-
-svg.chart text {
-  fill: #fff;
-}
-
-.axis path, 
-.axis line {
-  fill: none;
-  stroke: #fff;
-  shape-rendering: crispEdges;
-}
-
-.line {
-  fill: none;
-  stroke: steelblue;
-  stroke-width: 1.5px;
-}
-
-.dot {
-  fill: white;
-  stroke: steelblue;
-  stroke-width: 1.5px;
-}
-
+svg.chart .background { fill:#4d4d4d }
+svg.chart text{ fill:#fff }
+.axis path,.axis line { fill:none; stroke:#fff; shape-rendering:crispEdges }
+.line{ fill:none; stroke:steelblue; stroke-width:1.5px }
+.dot{ fill:white; stroke:steelblue; stroke-width:1.5px }
 </style>
 <body>
 <script src="../../d3.v2.js"></script>
 <script>
-
 var data = d3.range(40).map(function(i) {
   return {x: i / 39, y: (Math.sin(i / 3) + 2) / 4};
 });
 
+// define structure
+// margin
 var margin = {top: 10, right: 10, bottom: 20, left: 40},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
-
+// scales
 var x = d3.scale.linear()
     .domain([0, 1])
     .range([0, width]);
-
 var y = d3.scale.linear()
     .domain([0, 1])
     .range([height, 0]);
-
+// axes
 var xAxis = d3.svg.axis()
     .scale(x)
     .orient("bottom");
-
 var yAxis = d3.svg.axis()
     .scale(y)
     .orient("left");
-
+// line
 var line = d3.svg.line()
     .x(function(d) { return x(d.x); })
     .y(function(d) { return y(d.y); });
 
+// build svg
 var svg = d3.select("body").append("svg")
     .datum(data)
     .attr("class", "chart")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
         .call(d3.behavior.zoom().x(x).y(y).scaleExtent([1, 8]).on("zoom", zoom))
-    
-
-
-
+// add rect that seems to be required for zoom to work(?)   
 var rect = svg.append("rect")
     .attr("class", "background")
     .attr("width", width)
     .attr("height", height);
-
-    // var graph = svg.append("g")
-
-    var graph = svg.append("svg") 
-        .attr("class", "points") 
-        .attr("width", width) 
-        .attr("height", height) 
-        .append("g")
-
+// add SVG to contain graph so it doesn't overflow
+var graph = svg.append("svg") 
+    .attr("class", "points")
+    .attr("width", width) 
+    .attr("height", height) 
+    .append("g")
+// add axes
 svg.append("g")
     .attr("class", "x axis")
     .attr("transform", "translate(0," + height + ")")
     .call(xAxis);
-
 svg.append("svg")
     .attr("class", "y axis")
     .call(yAxis);
-
+// add line
 graph.append("path")
     .attr("class", "line")
     .attr("d", line);
-
+// add line dots
 graph.selectAll(".dot")
     .data(data)
-  .enter().append("circle")
-    .attr("class", "dot")
-    .attr("cx", line.x())
-    .attr("cy", line.y())
-    .attr("r", 3.5);
+      .enter().append("circle")
+        .attr("class", "dot")
+        .attr("cx", line.x())
+        .attr("cy", line.y())
+        .attr("r", 3.5);
 
 function zoom() {
-  svg.select(".x.axis").call(xAxis);
-  svg.select(".y.axis").call(yAxis);
-
-  graph.attr("transform",
-        "translate(" + d3.event.translate + ")"
-        + " scale(" + d3.event.scale + ")");
-
-  }
-
+    svg.select(".x.axis").call(xAxis);
+    svg.select(".y.axis").call(yAxis);
+    graph.attr("transform",
+      "translate(" + d3.event.translate + ")"
+      + " scale(" + d3.event.scale + ")");
+}
 </script>
 </body>
 </html>
