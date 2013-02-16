@@ -83,7 +83,6 @@ var dots = graph.selectAll("circle")
         .attr("transform", translate);
 function translate(d) {
   var rtn = "translate(" + x(d.x) + "," + y(d.y) + ")";
-  console.log('translate', d, rtn)
   return rtn
 }
 function zoom() {
