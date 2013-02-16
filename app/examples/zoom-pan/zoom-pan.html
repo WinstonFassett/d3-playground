@@ -1,26 +1,52 @@
 <!DOCTYPE html>
+<html>
+<head>
 <meta charset="utf-8">
 <title>Zoom + Pan</title>
 <script src="../../d3.v2.js"></script>
 <style>
 
-svg {
+body {
+  background: #4d4d4d;
+  color: white;
+}
+
+svg.chart {
   font: 10px sans-serif;
   shape-rendering: crispEdges;
-}
 
-rect {
-  fill: #ddd;
 }
-
-.axis path, .axis line {
+svg.chart .background {
+  fill: #4d4d4d;
+}
+svg.chart text {
+  fill: #fff;
+}
+svg.chart .axis path, 
+svg.chart .axis line {
   fill: none;
   stroke: #fff;
 }
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.dot {
+  fill: white;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
 
 </style>
+</head>
 <body>
 <script>
+
+var data = d3.range(40).map(function(i) {
+  return {x: i / 39, y: (Math.sin(i / 3) + 2) / 4};
+});
 
 var margin = {top: 0, right: 0, bottom: 12, left: 24},
     width = 960 - margin.left - margin.right,
@@ -45,16 +71,48 @@ var yAxis = d3.svg.axis()
     .ticks(5)
     .tickSize(-width);
 
+var line = d3.svg.line()
+    .x(function(d) { return x(d.x); })
+    .y(function(d) { return y(d.y); });
+
+
+console.log('data', data)
 var svg = d3.select("body").append("svg")
+    .datum(data)
+    .attr("class", "chart")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
     .call(d3.behavior.zoom().x(x).y(y).scaleExtent([1, 8]).on("zoom", zoom));
 
-svg.append("rect")
+var rect = svg.append("rect")
+    .attr("class", "background")
     .attr("width", width)
     .attr("height", height);
+
+
+var graph = svg.append("svg") 
+    .attr("class", "points") 
+    .attr("width", width) 
+    .attr("height", height) 
+    //.selectAll("polygon")
+
+   
+
+svg.append("path")
+    .attr("class", "line")
+    .attr("d", line);
+
+svg.selectAll(".dot")
+    .data(data)
+  .enter().append("circle")
+    .attr("class", "dot")
+    .attr("cx", line.x())
+    .attr("cy", line.y())
+    .attr("r", 3.5);
+
+
 
 svg.append("g")
     .attr("class", "x axis")
@@ -65,9 +123,12 @@ svg.append("g")
     .attr("class", "y axis")
     .call(yAxis);
 
+
 function zoom() {
   svg.select(".x.axis").call(xAxis);
   svg.select(".y.axis").call(yAxis);
 }
 
 </script>
+</body>
+</html>
