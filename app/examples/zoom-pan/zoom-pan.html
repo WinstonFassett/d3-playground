@@ -4,6 +4,7 @@
 <head>
 <meta charset="utf-8">
 <style>
+body { background: #4d4d4d; }
 svg.chart .background { fill:#4d4d4d }
 svg.chart text{ fill:#fff }
 .axis path,.axis line { fill:none; stroke:#fff; shape-rendering:crispEdges }
@@ -70,24 +71,41 @@ svg.append("svg")
     .attr("class", "y axis")
     .call(yAxis);
 // add line
-graph.append("path")
+var linePath = graph.append("path")
     .attr("class", "line")
     .attr("d", line);
-// add line dots
-graph.selectAll(".dot")
-    .data(data)
-      .enter().append("circle")
-        .attr("class", "dot")
-        .attr("cx", line.x())
-        .attr("cy", line.y())
-        .attr("r", 3.5);
 
+// add line dots
+// var lineCircles = graph
+//     .append("g")
+//     .selectAll(".dot")
+//     .data(data)
+//       .enter().append("circle")
+//         .attr("class", "dot")
+//         .attr("cx", line.x())
+//         .attr("cy", line.y())
+//         .attr("r", 3.5);
+var dots = svg.selectAll("circle")
+    .data(data)
+        .enter().append("circle")
+        .attr("class", "dot")
+        .attr("r", 2.5)
+        .attr("transform", translate);
+
+
+function translate(d) {
+  var rtn = "translate(" + x(d.x) + "," + y(d.y) + ")";
+  console.log('translate', d, rtn)
+  return rtn
+}
 function zoom() {
     svg.select(".x.axis").call(xAxis);
     svg.select(".y.axis").call(yAxis);
-    graph.attr("transform",
+
+    linePath.attr("transform",
       "translate(" + d3.event.translate + ")"
       + " scale(" + d3.event.scale + ")");
+    dots.attr("transform", translate);
 }
 </script>
 </body>
