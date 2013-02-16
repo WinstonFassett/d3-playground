@@ -74,26 +74,13 @@ svg.append("svg")
 var linePath = graph.append("path")
     .attr("class", "line")
     .attr("d", line);
-
-// add line dots
-// var lineCircles = graph
-//     .append("g")
-//     .selectAll(".dot")
-//     .data(data)
-//       .enter().append("circle")
-//         .attr("class", "dot")
-//         .attr("cx", line.x())
-//         .attr("cy", line.y())
-//         .attr("r", 3.5);
 var dots = graph.selectAll("circle")
     .append("g")
     .data(data)
         .enter().append("circle")
         .attr("class", "dot")
-        .attr("r", 2.5)
+        .attr("r", 3.5)
         .attr("transform", translate);
-
-
 function translate(d) {
   var rtn = "translate(" + x(d.x) + "," + y(d.y) + ")";
   console.log('translate', d, rtn)
@@ -102,10 +89,7 @@ function translate(d) {
 function zoom() {
     svg.select(".x.axis").call(xAxis);
     svg.select(".y.axis").call(yAxis);
-
-    linePath.attr("transform",
-      "translate(" + d3.event.translate + ")"
-      + " scale(" + d3.event.scale + ")");
+    linePath.attr("d", line);
     dots.attr("transform", translate);
 }
 </script>
