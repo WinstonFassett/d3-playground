@@ -1,32 +1,32 @@
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
-<title>Zoom + Pan</title>
-<script src="../../d3.v2.js"></script>
 <style>
 
 body {
   background: #4d4d4d;
   color: white;
-}
-
-svg.chart {
   font: 10px sans-serif;
-  shape-rendering: crispEdges;
-
 }
+
+
 svg.chart .background {
   fill: #4d4d4d;
 }
+
 svg.chart text {
   fill: #fff;
 }
-svg.chart .axis path, 
-svg.chart .axis line {
+
+.axis path, 
+.axis line {
   fill: none;
   stroke: #fff;
+  shape-rendering: crispEdges;
 }
+
 .line {
   fill: none;
   stroke: steelblue;
@@ -40,43 +40,38 @@ svg.chart .axis line {
 }
 
 </style>
-</head>
 <body>
+<script src="../../d3.v2.js"></script>
 <script>
 
 var data = d3.range(40).map(function(i) {
   return {x: i / 39, y: (Math.sin(i / 3) + 2) / 4};
 });
 
-var margin = {top: 0, right: 0, bottom: 12, left: 24},
+var margin = {top: 10, right: 10, bottom: 20, left: 40},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
 var x = d3.scale.linear()
-    .domain([-width / 2, width / 2])
+    .domain([0, 1])
     .range([0, width]);
 
 var y = d3.scale.linear()
-    .domain([-height / 2, height / 2])
+    .domain([0, 1])
     .range([height, 0]);
 
 var xAxis = d3.svg.axis()
     .scale(x)
-    .orient("bottom")
-    .tickSize(-height);
+    .orient("bottom");
 
 var yAxis = d3.svg.axis()
     .scale(y)
-    .orient("left")
-    .ticks(5)
-    .tickSize(-width);
+    .orient("left");
 
 var line = d3.svg.line()
     .x(function(d) { return x(d.x); })
     .y(function(d) { return y(d.y); });
 
-
-console.log('data', data)
 var svg = d3.select("body").append("svg")
     .datum(data)
     .attr("class", "chart")
@@ -84,27 +79,38 @@ var svg = d3.select("body").append("svg")
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-    .call(d3.behavior.zoom().x(x).y(y).scaleExtent([1, 8]).on("zoom", zoom));
+        .call(d3.behavior.zoom().x(x).y(y).scaleExtent([1, 8]).on("zoom", zoom))
+    
+
+
 
 var rect = svg.append("rect")
     .attr("class", "background")
     .attr("width", width)
     .attr("height", height);
 
+    // var graph = svg.append("g")
 
-var graph = svg.append("svg") 
-    .attr("class", "points") 
-    .attr("width", width) 
-    .attr("height", height) 
-    //.selectAll("polygon")
+    var graph = svg.append("svg") 
+        .attr("class", "points") 
+        .attr("width", width) 
+        .attr("height", height) 
+        .append("g")
 
-   
+svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis);
 
-svg.append("path")
+svg.append("svg")
+    .attr("class", "y axis")
+    .call(yAxis);
+
+graph.append("path")
     .attr("class", "line")
     .attr("d", line);
 
-svg.selectAll(".dot")
+graph.selectAll(".dot")
     .data(data)
   .enter().append("circle")
     .attr("class", "dot")
@@ -112,22 +118,15 @@ svg.selectAll(".dot")
     .attr("cy", line.y())
     .attr("r", 3.5);
 
-
-
-svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(xAxis);
-
-svg.append("g")
-    .attr("class", "y axis")
-    .call(yAxis);
-
-
 function zoom() {
   svg.select(".x.axis").call(xAxis);
   svg.select(".y.axis").call(yAxis);
-}
+
+  graph.attr("transform",
+        "translate(" + d3.event.translate + ")"
+        + " scale(" + d3.event.scale + ")");
+
+  }
 
 </script>
 </body>
