@@ -67,7 +67,7 @@ svg.append("g")
     .attr("class", "x axis")
     .attr("transform", "translate(0," + height + ")")
     .call(xAxis);
-svg.append("svg")
+svg.append("g")
     .attr("class", "y axis")
     .call(yAxis);
 // add SVG to contain graph so it doesn't overflow
