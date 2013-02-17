@@ -6,12 +6,17 @@
 <style>
 body { background: #4d4d4d; }
 svg.chart .background { fill:#4d4d4d }
-svg.chart text{ fill:#fff }
+svg.chart text{ 
+    fill:#fff;
+    font-family: Helvetica,Arial,sans-serif;
+    font-weight: 100;
+    font-size: 10pt;
+}
 .axis path { fill:none; stroke:#fff; shape-rendering:crispEdges }
 .axis line { stroke: rgba(255,255,255,.21); }
-.line{ fill:none; stroke:steelblue; stroke-width:1px }
+.line{ fill:none; stroke:#75D018; stroke-width:6px }
 .domain { stroke-width: 2.5px; }
-.dot{ fill:white; stroke:steelblue; stroke-width:1px }
+.dot{ stroke:white; fill:#75D018; stroke-width:2px }
 
 </style>
 <body>
@@ -34,14 +39,17 @@ var y = d3.scale.linear()
     .domain([0, 1])
     .range([height, 0]);
 // axes
+var tickPadding = 10;
 var xAxis = d3.svg.axis()
     .scale(x)
     .orient("bottom")
-    .tickSize(-height);
+    .tickSize(-height)
+    .tickPadding(tickPadding);
 var yAxis = d3.svg.axis()
     .scale(y)
     .orient("left")
-    .tickSize(-width);;
+    .tickSize(-width)
+    .tickPadding(tickPadding);
 
 
 var line = d3.svg.line()
@@ -85,7 +93,7 @@ var dots = graph.selectAll("circle")
     .data(data)
         .enter().append("circle")
         .attr("class", "dot")
-        .attr("r", 3.5)
+        .attr("r", 8)
         .attr("transform", translate);
 
 function translate(d) {
