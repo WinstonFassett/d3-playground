@@ -71,24 +71,24 @@ var rect = svg.append("rect")
     .attr("width", width)
     .attr("height", height);
 // add axes
-svg.append("g")
+svg.xAxis = svg.append("g")
     .attr("class", "x axis")
     .attr("transform", "translate(0," + height + ")")
     .call(xAxis);
-svg.append("g")
+svg.yAxis = svg.append("g")
     .attr("class", "y axis")
     .call(yAxis);
 // add SVG to contain graph so it doesn't overflow
-var graph = svg.append("svg") 
+svg.graph = svg.append("svg") 
     .attr("class", "points")
     .attr("width", width) 
     .attr("height", height) 
     .append("g")    
 // add line
-var linePath = graph.append("path")
+var linePath = svg.graph.append("path")
     .attr("class", "line")
     .attr("d", line);
-var dots = graph.selectAll("circle")
+var dots = svg.graph.selectAll("circle")
     .append("g")
     .data(data)
         .enter().append("circle")
@@ -101,8 +101,8 @@ function translate(d) {
   return rtn
 }
 function zoom() {
-    svg.select(".x.axis").call(xAxis);
-    svg.select(".y.axis").call(yAxis);
+    svg.xAxis.call(xAxis);
+    svg.yAxis.call(yAxis);
     linePath.attr("d", line);
     dots.attr("transform", translate);
 }
