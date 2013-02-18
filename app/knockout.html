@@ -2,39 +2,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>Zoom + Pan</title>
-<script src="d3.v2.js"></script>
-<script src="scripts/lib/knockout.js"></script>
-
-<script src="scripts/d3/timeSeriesChart.js"></script>
-<script src="scripts/d3/koTimeSeriesChart.js"></script>
-<script src="scripts/d3/zoomChart.js"></script>
-<script  src="scripts/lib/require.js"></script>
+  <meta charset="utf-8">
+  <title>Zoom + Pan</title>
+  <script src="d3.v2.js"></script>
+  <script src="scripts/lib/nv.d3.js"></script>
+  <script src="scripts/lib/knockout.js"></script>
 
 
-<style>
-body { background: #4d4d4d;}
-svg {
-  font: 10px sans-serif;
-  shape-rendering: crispEdges;
-}
-
-rect {
-  fill: #ddd;
-}
-
-
-.axis path, .axis line {
-  fill: none;
-  stroke: #fff;
-}
-.axis path.domain {
-  fill: none;
-  stroke: none;
-}
-</style>
-<link rel="stylesheet" type="text/css" href="examples/zoom-pan/zoom-pan.css"></link>
+  <script src="scripts/d3/koTimeSeriesChart.js"></script>
+  <!-- <script src="scripts/d3/zoomChart.js"></script> -->
+  <script src="examples/zoom-pan/zoom-pan-reusable.js"></script>
+  <script  src="scripts/lib/require.js"></script>
+  <link rel="stylesheet" type="text/css" href="examples/zoom-pan/zoom-pan-reusable.css">
 </head>
 <body>
 
@@ -42,6 +21,7 @@ rect {
   <h2>Chart Options</h2>
   <input type="number" step="10" data-bind="value: height" placeholder="height" />
   <input type="number" step="10" data-bind="value: width" placeholder="width" />
+  <input type="number" step=".2" data-bind="value: pointRadius" placeholder="point radius" />
 </div>
 <div data-bind="if: datatable">
   <svg class="chart" data-bind="d3:{ datum: datatable().toJS().rows, chart: chartOptions }, attr: {height: chartOptions.height, width: chartOptions.width}">
@@ -115,8 +95,8 @@ rect {
     require(['datatable/DataTable'], function(DataTable){
       console.log('binding and stuff')
       var chartAccessor = zoomChart() // timeSeriesChart()
-          .x(function(d) { return formatDate.parse(d.date); })
-          .y(function(d) { return +d.price; });
+          // .x(function(d) { return formatDate.parse(d.date); })
+          // .y(function(d) { return +d.price; });
 
 
       var vm = {
@@ -125,7 +105,8 @@ rect {
         chartOptions: {
           impl: chartAccessor,
           height: ko.observable(500),
-          width: ko.observable(700)
+          width: ko.observable(700),
+          pointRadius: ko.observable(4)
         },
         datatable: ko.observable()
 
@@ -133,26 +114,31 @@ rect {
 
       var formatDate = d3.time.format("%b %Y");
 
-      console.log('load csv');
-      d3.csv("examples/zoom/sp500.csv", function(csv) {
-        console.log('csv', csv);
-        vm.csv(csv);
-        // d3.select("body").append("svg")
-        //     .datum(data)
-        //     .call(chart);
-
+      // console.log('load csv');
+      // d3.csv("examples/zoom/sp500.csv", function(csv) {
+      //   console.log('csv', csv);
+      //   vm.csv(csv);
+      //   // d3.select("body").append("svg")
+      //   //     .datum(data)
+      //   //     .call(chart);
+      var data =  
+        d3.range(40).map(function(i) {
+          return {x: i / 39, y: (Math.sin(i / 3) + 2) / 4};
+        })
 
         // datatable
           var dt = DataTable({
-            cols: [{id:'date'}, {id:'price'}],
-            rows: csv
+            cols: [{id:'x'}, {id:'y'}],
+            rows: data
           });
           console.log('dt', dt);
           vm.datatable(dt);
 
 
 
-      });
+      // });
+
+      
 
         
       console.log('binding', vm)
