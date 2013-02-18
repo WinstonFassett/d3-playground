@@ -2,21 +2,19 @@
 
 function zoomChart(){
 
+
+    var margin = {top: 50, right: 10, bottom: 50, left: 70},
+        width = 960 - margin.left - margin.right,
+        height = 500 - margin.top - margin.bottom;
+    // scales
+    var x = d3.scale.linear()
+        .domain([0, 1])
+        .range([0, width]);
+    var y = d3.scale.linear()
+        .domain([0, 1])
+        .range([height, 0]);
     function chart(selection, options){
-
-
       selection.each(function(d, i) {
-
-        var margin = {top: 50, right: 10, bottom: 50, left: 70},
-            width = 960 - margin.left - margin.right,
-            height = 500 - margin.top - margin.bottom;
-        // scales
-        var x = d3.scale.linear()
-            .domain([0, 1])
-            .range([0, width]);
-        var y = d3.scale.linear()
-            .domain([0, 1])
-            .range([height, 0]);
         // axes
         var tickPadding = 10;
         var xLabel = "X axis",
@@ -31,8 +29,6 @@ function zoomChart(){
             .orient("left")
             .tickSize(-width)
             .tickPadding(tickPadding);
-
-
         var line = d3.svg.line()
             .x(function(d) { return x(d.x); })
             .y(function(d) { return y(d.y); });
@@ -95,6 +91,8 @@ function zoomChart(){
       });
 
     }
+    chart.x = x;
+    chart.y = y;
 
     return chart;
 
