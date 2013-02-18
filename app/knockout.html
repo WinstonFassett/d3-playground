@@ -14,7 +14,7 @@
 
 
 <style>
-
+body { background: #4d4d4d;}
 svg {
   font: 10px sans-serif;
   shape-rendering: crispEdges;
@@ -23,10 +23,7 @@ svg {
 rect {
   fill: #ddd;
 }
-path.line {
-  fill: none;
-  stroke: #000;
-}
+
 
 .axis path, .axis line {
   fill: none;
@@ -36,9 +33,8 @@ path.line {
   fill: none;
   stroke: none;
 }
-
-
 </style>
+<link rel="stylesheet" type="text/css" href="examples/zoom-pan/zoom-pan.css"></link>
 </head>
 <body>
 
@@ -48,7 +44,7 @@ path.line {
   <input type="number" step="10" data-bind="value: width" placeholder="width" />
 </div>
 <div data-bind="if: datatable">
-  <svg data-bind="d3:{ datum: datatable().toJS().rows, chart: chartOptions }, attr: {height: chartOptions.height, width: chartOptions.width}">
+  <svg class="chart" data-bind="d3:{ datum: datatable().toJS().rows, chart: chartOptions }, attr: {height: chartOptions.height, width: chartOptions.width}">
   </svg>
 </div>
 
