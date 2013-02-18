@@ -16,8 +16,8 @@ function zoomChart(){
     function chart(selection, options){
       selection.each(function(data, i) {
       // generate chart here; `d` is the data and `this` is the element
-        var svg = d3.select(this)
-
+        // var svg = d3.select(this)
+        
         // axes
         var tickPadding = 10;
         var xLabel = "X axis",
@@ -36,29 +36,32 @@ function zoomChart(){
             .x(function(d) { return x(d.x); })
             .y(function(d) { return y(d.y); });
 
-        // build svg
-        svg = svg
-            .attr("class", "chart")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-              .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-              .call(d3.behavior.zoom().x(x).y(y).scaleExtent([.2, 5]).on("zoom", zoom))
+        var svg = d3.select(this).selectAll("svg").data([data]);
+
+        var gEnter = svg.enter()
+                .append("svg")
+                .attr("class", "chart")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                  .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+                  .call(d3.behavior.zoom().x(x).y(y).scaleExtent([.2, 5]).on("zoom", zoom))
         // add rect that seems to be required for zoom to work(?)   
-        var rect = svg.append("rect")
+        var current = gEnter;
+        var rect = current.append("rect")
             .attr("class", "background")
             .attr("width", width)
             .attr("height", height);
         // add axes
-        svg.xAxis = svg.append("g")
+        svg.xAxis = current.append("g")
             .attr("class", "x axis")
             .attr("transform", "translate(0," + height + ")")
             .call(xAxis);
-        svg.yAxis = svg.append("g")
+        svg.yAxis = current.append("g")
             .attr("class", "y axis")
             .call(yAxis);
         // add SVG to contain graph so it doesn't overflow
-        svg.graph = svg.append("svg") 
+        svg.graph = current.append("svg") 
             .attr("class", "points")
             .attr("width", width)   
             .attr("height", height) 
