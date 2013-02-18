@@ -11,6 +11,7 @@ function timeSeriesChart() {
       line = d3.svg.line().x(X).y(Y);
 
   function chart(selection) {
+    console.log('chart', arguments);
     selection.each(function(data) {
 
       // Convert data to standard representation greedily;

@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Zoom + Pan</title>
+<script src="d3.v2.js"></script>
+<script src="scripts/lib/knockout.js"></script>
+
+<script src="scripts/d3/timeSeriesChart.js"></script>
+<script src="scripts/d3/koTimeSeriesChart.js"></script>
+<style>
+
+svg {
+  font: 10px sans-serif;
+  shape-rendering: crispEdges;
+}
+
+rect {
+  fill: #ddd;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #fff;
+}
+
+</style>
+</head>
+<body>
+
+<div data-bind="with: chartOptions">
+  <input data-bind="value: height" placeholder="height" />
+  <input data-bind="value: width" placeholder="width" />
+</div>
+<svg data-bind="d3:{ datum: csv, chart: chartOptions }">
+</svg>
+
+<script>
+
+
+var chartAccessor = timeSeriesChart()
+    .x(function(d) { return formatDate.parse(d.date); })
+    .y(function(d) { return +d.price; });
+
+
+var vm = {
+  csv: ko.observableArray(),
+  
+  chartOptions: {
+    impl: chartAccessor,
+    height: ko.observable(700),
+    width: ko.observable(125)
+  }
+};
+
+var formatDate = d3.time.format("%b %Y");
+
+console.log('load csv');
+d3.csv("examples/zoom/sp500.csv", function(csv) {
+  console.log('csv', csv);
+  vm.csv(csv);
+  // d3.select("body").append("svg")
+  //     .datum(data)
+  //     .call(chart);
+});
+
+console.log('binding', vm)
+ko.applyBindings(vm);
+</script>
+
+
+</body>
+</html>
