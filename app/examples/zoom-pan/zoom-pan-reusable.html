@@ -13,6 +13,14 @@
 <script src="zoom-pan-reusable.js"></script>
 <script>
 var chart = zoomChart();
+var data = 
+	// { "key": "howdy" , values: 
+	d3.range(40).map(function(i) {
+	  return {x: i / 39, y: (Math.sin(i / 3) + 2) / 4};
+	})
+var svg = d3.select("body")
+      .datum(data)
+      .call(chart);
 </script>
 </body>
 </html>
