@@ -34,8 +34,7 @@ function zoomChart(){
             .y(function(d) { return y(d.y); });
 
         // build svg
-        var svg = d3.select("body").append("svg")
-            .datum(data)
+        var svg = d3.select(this)
             .attr("class", "chart")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
@@ -58,7 +57,7 @@ function zoomChart(){
         // add SVG to contain graph so it doesn't overflow
         svg.graph = svg.append("svg") 
             .attr("class", "points")
-            .attr("width", width) 
+            .attr("width", width)   
             .attr("height", height) 
             .append("g")    
         // add line
@@ -91,8 +90,36 @@ function zoomChart(){
       });
 
     }
-    chart.x = x;
-    chart.y = y;
+  chart.margin = function(_) {
+    if (!arguments.length) return margin;
+    margin = _;
+    return chart;
+  };
+
+  chart.width = function(_) {
+    if (!arguments.length) return width;
+    width = _;
+    return chart;
+  };
+
+  chart.height = function(_) {
+    if (!arguments.length) return height;
+    height = _;
+    return chart;
+  };
+
+  chart.x = function(_) {
+    if (!arguments.length) return xValue;
+    x = _;
+    return chart;
+  };
+
+  chart.y = function(_) {
+    if (!arguments.length) return yValue;
+    y = _;
+    return chart;
+  };
+
 
     return chart;
 

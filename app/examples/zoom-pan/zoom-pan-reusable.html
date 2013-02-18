@@ -2,25 +2,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<style>
-
-</style>
-<link rel="stylesheet" type="text/css" href="zoom-pan-reusable.css">
+	<meta charset="utf-8">
+	<style></style>
+	<link rel="stylesheet" type="text/css" href="zoom-pan-reusable.css">
+</head>
 <body>
 <script src="../../d3.v2.js"></script>
 <script src="http://nvd3.org/nv.d3.js"></script>
 <script src="zoom-pan-reusable.js"></script>
 <script>
 var chart = zoomChart();
-var data = 
-	// { "key": "howdy" , values: 
+var data =  
 	d3.range(40).map(function(i) {
 	  return {x: i / 39, y: (Math.sin(i / 3) + 2) / 4};
 	})
-var svg = d3.select("body")
-      .datum(data)
-      .call(chart);
+var svg = d3.select("body").append("svg")
+  .datum(data)
+  .call(chart);
 </script>
 </body>
 </html>
