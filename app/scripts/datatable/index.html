@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>&nbsp;</title>
+    <link rel="stylesheet" href="main.css" />
+    <link href="../lib/nv.d3.css" rel="stylesheet" type="text/css">
+    <link href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQEAYAAABPYyMiAAAABmJLR0T///////8JWPfcAAAACXBIWXMAAABIAAAASABGyWs+AAAAF0lEQVRIx2NgGAWjYBSMglEwCkbBSAcACBAAAeaR9cIAAAAASUVORK5CYII=" rel="icon" type="image/x-icon" />
+</head>
+<body>
+
+  <!--[if lt IE 7]>
+      <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+  <![endif]-->
+
+  <h1>DataTable Test Harness</h1>
+
+  <h2>Live Chart</h2>
+  <div id="chart"><svg></svg></div>
+
+  <div data-bind="template: { name: 'app' }">
+      Loading...
+  </div>
+
+  <script type="text/html" id="app">
+
+    <section data-bind="template: {name: 'DataTable', data: $data}">
+    </section>
+    <section data-bind="template: {name: 'DataTable.JSON', data: $data}">
+    </section> 
+  </script>
+
+
+  <script type="text/html" id="DataTable">
+    <h2>DataTable</h2>
+    Editable labels, cells
+     <table>
+      <thead>
+        <tr data-bind="foreach: cols">
+          <th>
+            <span data-bind="text: id"></span>
+            <input type="text" data-bind="value: label, valueUpdate: 'afterkeydown'"/>
+            <!--input type="text" data-bind="value: id, valueUpdate: 'afterkeydown'"/-->
+
+          </th>
+        </tr>
+      </thead>
+      <tbody data-bind="foreach: { data: rows, as: 'row'}">
+        <tr>          
+          <!-- ko foreach: $parent.cols -->
+          <td>
+            <!--[<span data-bind="text: ko.toJSON(row[id()])"></span>]-->
+            <!--<span data-bind="text: row[$data.id()]"></span>-->
+            <input data-bind="value: row[$data.id()], valueUpdate: 'afterkeydown'" />
+          </td>
+          <!-- /ko -->
+        </tr>
+      </tbody>
+     </table>
+  </script>
+
+  <script type="texthtml" id="DataTable.JSON">
+  <h2>Live JSON</h2>
+     <table>
+      <thead><tr><th>DataTable JSON</th><th>Chart JSON</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>
+           <pre data-bind="text: JSON.stringify(ko.wrap.toJS($data), null, 2)">
+           </pre>
+          </td>
+          <td>
+           <pre data-bind="text: JSON.stringify(ko.wrap.toJS(data), null, 2)">
+           </pre>
+          </td>
+        </tr>
+      <tbody>
+    </table>
+  </script>
+
+
+  <!-- build:js scripts/amd-app.js -->
+  <script data-main="../config" src="../lib/require.js"></script>
+  <!-- endbuild -->    
+  <script>require(['datatable/main']);</script>
+
+</body>
+</html>

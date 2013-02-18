@@ -1,7 +1,5 @@
 require.config({
     // main entry point
-    deps: ["ko-webmail/main"],
-
     paths: {
       // requireJS plugins
       text: 'require/text',
@@ -14,7 +12,8 @@ require.config({
       signals: 'lib/signals',
       bootstrap: 'lib/bootstrap/js/bootstrap',
       // sammy is an alternative to crossroads+hasher, but requires jQuery (see shim)
-      sammy: 'lib/sammy'
+      sammy: 'lib/sammy',
+      'knockout.wrap': 'lib/knockout.wrap'
   },
   shim: {
       jquery: '$',

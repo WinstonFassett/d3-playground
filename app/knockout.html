@@ -9,6 +9,10 @@
 
 <script src="scripts/d3/timeSeriesChart.js"></script>
 <script src="scripts/d3/koTimeSeriesChart.js"></script>
+
+<script data-main="scripts/config" src="scripts/lib/require.js"></script>
+
+
 <style>
 
 svg {
@@ -30,11 +34,65 @@ rect {
 <body>
 
 <div data-bind="with: chartOptions">
-  <input data-bind="value: height" placeholder="height" />
-  <input data-bind="value: width" placeholder="width" />
+  <h2>Chart Options</h2>
+  <input type="number" step="10" data-bind="value: height" placeholder="height" />
+  <input type="number" step="10" data-bind="value: width" placeholder="width" />
 </div>
-<svg data-bind="d3:{ datum: csv, chart: chartOptions }">
+<div data-bind=" d3:{ datum: csv, chart: chartOptions }">
 </svg>
+
+<div data-bind="with: datatable">
+  <h2>Datatable</h2>
+</div>
+
+
+  <script type="text/html" id="DataTable">
+    <h2>DataTable</h2>
+    Editable labels, cells
+     <table>
+      <thead>
+        <tr data-bind="foreach: cols">
+          <th>
+            <span data-bind="text: id"></span>
+            <input type="text" data-bind="value: label, valueUpdate: 'afterkeydown'"/>
+            <!--input type="text" data-bind="value: id, valueUpdate: 'afterkeydown'"/-->
+
+          </th>
+        </tr>
+      </thead>
+      <tbody data-bind="foreach: { data: rows, as: 'row'}">
+        <tr>          
+          <!-- ko foreach: $parent.cols -->
+          <td>
+            <!--[<span data-bind="text: ko.toJSON(row[id()])"></span>]-->
+            <!--<span data-bind="text: row[$data.id()]"></span>-->
+            <input data-bind="value: row[$data.id()], valueUpdate: 'afterkeydown'" />
+          </td>
+          <!-- /ko -->
+        </tr>
+      </tbody>
+     </table>
+  </script>
+
+  <script type="texthtml" id="DataTable.JSON">
+  <h2>Live JSON</h2>
+     <table>
+      <thead><tr><th>DataTable JSON</th><th>Chart JSON</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>
+           <pre data-bind="text: JSON.stringify(ko.wrap.toJS($data), null, 2)">
+           </pre>
+          </td>
+          <td>
+           <pre data-bind="text: JSON.stringify(ko.wrap.toJS(data), null, 2)">
+           </pre>
+          </td>
+        </tr>
+      <tbody>
+    </table>
+  </script>
+
 
 <script>
 
@@ -51,7 +109,9 @@ var vm = {
     impl: chartAccessor,
     height: ko.observable(125),
     width: ko.observable(700)
-  }
+  },
+  datatable: ko.observable()
+
 };
 
 var formatDate = d3.time.format("%b %Y");
@@ -63,8 +123,23 @@ d3.csv("examples/zoom/sp500.csv", function(csv) {
   // d3.select("body").append("svg")
   //     .datum(data)
   //     .call(chart);
+
+  require(['datatable/DataTable'], function(DataTable){
+
+  // datatable
+    var dt = DataTable({
+      cols: [{key:'date'}, {key:'price'}],
+      rows: csv
+    });
+    console.log('dt', dt);
+    vm.datatable(dt);
+
+  });
+
+
 });
 
+  
 console.log('binding', vm)
 ko.applyBindings(vm);
 </script>
