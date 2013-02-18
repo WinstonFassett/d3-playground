@@ -10,7 +10,11 @@ function timeSeriesChart() {
       area = d3.svg.area().x(X).y1(Y),
       line = d3.svg.line().x(X).y(Y);
 
-  function chart(selection) {
+  function chart(selection, options) {
+
+    width = options.width || width;
+    height = options.height || height;
+
     console.log('chart', arguments);
     selection.each(function(data) {
 
@@ -34,7 +38,8 @@ function timeSeriesChart() {
       var svg = d3.select(this).selectAll("svg").data([data]);
 
       // Otherwise, create the skeletal chart.
-      var gEnter = svg.enter().append("svg").append("g");
+      var gEnter = svg.enter()
+        .append("svg").append("g");
       gEnter.append("path").attr("class", "area");
       gEnter.append("path").attr("class", "line");
       gEnter.append("g").attr("class", "x axis");
