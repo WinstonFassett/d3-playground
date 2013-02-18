@@ -9,7 +9,7 @@
 
 <script src="scripts/d3/timeSeriesChart.js"></script>
 <script src="scripts/d3/koTimeSeriesChart.js"></script>
-
+<script src="scripts/d3/zoomChart.js"></script>
 <script  src="scripts/lib/require.js"></script>
 
 
@@ -24,6 +24,10 @@ rect {
   fill: #ddd;
 }
 
+path.line {
+  fill: none;
+  stroke: #000;
+}
 .axis path, .axis line {
   fill: none;
   stroke: #fff;
@@ -109,7 +113,7 @@ rect {
     console.log("got config")
     require(['datatable/DataTable'], function(DataTable){
       console.log('binding and stuff')
-      var chartAccessor = timeSeriesChart()
+      var chartAccessor = zoomChart() // timeSeriesChart()
           .x(function(d) { return formatDate.parse(d.date); })
           .y(function(d) { return +d.price; });
 
@@ -119,7 +123,7 @@ rect {
         
         chartOptions: {
           impl: chartAccessor,
-          height: ko.observable(125),
+          height: ko.observable(500),
           width: ko.observable(700)
         },
         datatable: ko.observable()
