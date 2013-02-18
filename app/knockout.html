@@ -10,7 +10,7 @@
 <script src="scripts/d3/timeSeriesChart.js"></script>
 <script src="scripts/d3/koTimeSeriesChart.js"></script>
 
-<script data-main="scripts/config" src="scripts/lib/require.js"></script>
+<script  src="scripts/lib/require.js"></script>
 
 
 <style>
@@ -38,11 +38,18 @@ rect {
   <input type="number" step="10" data-bind="value: height" placeholder="height" />
   <input type="number" step="10" data-bind="value: width" placeholder="width" />
 </div>
-<div data-bind=" d3:{ datum: csv, chart: chartOptions }">
-</svg>
+<div data-bind="if: datatable">
+  <svg data-bind="d3:{ datum: datatable().toJS().rows, chart: chartOptions }, attr: {height: chartOptions.height, width: chartOptions.width}">
+  </svg>
+</div>
 
 <div data-bind="with: datatable">
   <h2>Datatable</h2>
+
+    <section data-bind="template: {name: 'DataTable', data: $data}">
+    </section>
+    <section data-bind="template: {name: 'DataTable.JSON', data: $data}">
+    </section> 
 </div>
 
 
@@ -54,7 +61,7 @@ rect {
         <tr data-bind="foreach: cols">
           <th>
             <span data-bind="text: id"></span>
-            <input type="text" data-bind="value: label, valueUpdate: 'afterkeydown'"/>
+            <input type="text" data-bind="value: $data.label, valueUpdate: 'afterkeydown'"/>
             <!--input type="text" data-bind="value: id, valueUpdate: 'afterkeydown'"/-->
 
           </th>
@@ -85,7 +92,7 @@ rect {
            </pre>
           </td>
           <td>
-           <pre data-bind="text: JSON.stringify(ko.wrap.toJS(data), null, 2)">
+           <pre data-bind="text: JSON.stringify(ko.wrap.toJS($data.series), null, 2)">
            </pre>
           </td>
         </tr>
@@ -95,53 +102,64 @@ rect {
 
 
 <script>
+  require.config({ baseUrl: 'scripts'})
+  define('knockout', ko);
+  require(["require","config"],function(require){
+  // require(["config"],function(){
+    console.log("got config")
+    require(['datatable/DataTable'], function(DataTable){
+      console.log('binding and stuff')
+      var chartAccessor = timeSeriesChart()
+          .x(function(d) { return formatDate.parse(d.date); })
+          .y(function(d) { return +d.price; });
 
 
-var chartAccessor = timeSeriesChart()
-    .x(function(d) { return formatDate.parse(d.date); })
-    .y(function(d) { return +d.price; });
+      var vm = {
+        csv: ko.observableArray(),
+        
+        chartOptions: {
+          impl: chartAccessor,
+          height: ko.observable(125),
+          width: ko.observable(700)
+        },
+        datatable: ko.observable()
+
+      };
+
+      var formatDate = d3.time.format("%b %Y");
+
+      console.log('load csv');
+      d3.csv("examples/zoom/sp500.csv", function(csv) {
+        console.log('csv', csv);
+        vm.csv(csv);
+        // d3.select("body").append("svg")
+        //     .datum(data)
+        //     .call(chart);
 
 
-var vm = {
-  csv: ko.observableArray(),
-  
-  chartOptions: {
-    impl: chartAccessor,
-    height: ko.observable(125),
-    width: ko.observable(700)
-  },
-  datatable: ko.observable()
+        // datatable
+          var dt = DataTable({
+            cols: [{id:'date'}, {id:'price'}],
+            rows: csv
+          });
+          console.log('dt', dt);
+          vm.datatable(dt);
 
-};
 
-var formatDate = d3.time.format("%b %Y");
 
-console.log('load csv');
-d3.csv("examples/zoom/sp500.csv", function(csv) {
-  console.log('csv', csv);
-  vm.csv(csv);
-  // d3.select("body").append("svg")
-  //     .datum(data)
-  //     .call(chart);
+      });
 
-  require(['datatable/DataTable'], function(DataTable){
+        
+      console.log('binding', vm)
+      ko.applyBindings(vm);
 
-  // datatable
-    var dt = DataTable({
-      cols: [{key:'date'}, {key:'price'}],
-      rows: csv
+
     });
-    console.log('dt', dt);
-    vm.datatable(dt);
+      
+    
 
   });
 
-
-});
-
-  
-console.log('binding', vm)
-ko.applyBindings(vm);
 </script>
 
 

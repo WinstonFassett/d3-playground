@@ -16,29 +16,29 @@ define(['knockout', 'knockout.wrap'], function(ko, wrap){
 		console.log('DataTable', data);
 		var self = wrap.fromJS(data);
 
-	  // self.series = ko.computed({
-	  // 	read:function(){
-	  // 		var cols = self.cols(),
-	  // 				rows = self.rows()
-	  // 				;
-			// 	if(cols && rows){
-			// 		console.log('creating series');
-			// 		var series = map(cols, function(col){
-			// 			var colId = col.id(),
-			// 			    values = map(rows, function(row){
-			// 						return unwrap(row[colId]);
-			// 					})
-			// 			    ;
-			// 			return Series({
-			// 				key: colId,
-			// 				values: values
-			// 			});
-			// 		});
-			// 		return series;
-			// 	}
-	  // 	}, 
-	  // 	deferEvaluation: true
-	  // });
+	  self.series = ko.computed({
+	  	read:function(){
+	  		var cols = self.cols(),
+	  				rows = self.rows()
+	  				;
+				if(cols && rows){
+					console.log('creating series');
+					var series = map(cols, function(col){
+						var colId = col.id(),
+						    values = map(rows, function(row){
+									return unwrap(row[colId]);
+								})
+						    ;
+						return Series({
+							key: colId,
+							values: values
+						});
+					});
+					return series;
+				}
+	  	}, 
+	  	deferEvaluation: true
+	  });
 	  self.toJS = function(){ return wrap.toJS(self); }
 
 		return self;
