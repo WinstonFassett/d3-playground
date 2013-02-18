@@ -41,46 +41,66 @@ function zoomChart(opts) {
       // Select the svg element, if it exists.
       var svg = d3.select(this).selectAll("svg").data([data]);
 
+      function draw() {
+          console.log('draw', d3.event);
+          // svg.xAxis.call(xAxis);
+          // svg.yAxis.call(yAxis);
+          // linePath.attr("d", line);
+          // dots.attr("transform", translate);
+
+
+          // Update the outer dimensions.
+          svg .attr("width", width)
+              .attr("height", height);
+
+          // Update the inner dimensions.
+          var g = svg.select("g")
+              .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+          // Update the area path.
+          // g.select(".area")
+          //     .attr("d", area.y0(y.range()[0]));
+          // g.select(".dots").data(data)
+
+          // // Update the line path.
+          
+          g.select(".line")
+            .attr("d", line);
+          // g.select('.dots').data(data)
+          //   .enter().append("circle")
+          //   .attr("class", "dot")
+          //   .attr("r", 8)
+          //   .attr("transform", translate);;
+          //   // // Update the x-axis.
+            g.select(".x.axis")
+                .attr("transform", "translate(0," + y.range()[0] + ")")
+                .call(xAxis);          
+      }
+
       // Otherwise, create the skeletal chart.
       var gEnter = svg.enter()
-        .append("svg").append("g");
-      
+        .append("svg").append("g")
+          // .append("g")
+	      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+	      .call(d3.behavior.zoom().x(x).y(y).scaleExtent([.2, 5]).on("zoom", draw))
+
+      gEnter.append("rect")
+	    .attr("class", "background")
+	    .attr("width", width)
+	    .attr("height", height);
       // gEnter.append("path").attr("class", "area");
       gEnter.append("path").attr("class", "line");
-      // gEnter.append("g").attr("class", "x axis");
+      gEnter.append("g").attr("class", "x axis");
+      gEnter.append("g").attr("class", "dots")
+      draw();
 
-function translate(d) {
-  var rtn = "translate(" + x(d.x) + "," + y(d.y) + ")";
-  return rtn
-}
+    	function translate(d) {
+    	  // var rtn = "translate(" + x(d.x) + "," + y(d.y) + ")";
+      	  var rtn = "translate(" + (margin.left + x(d[0])) + "," + (margin.top + y(d[1])) + ")";
 
+    	  return rtn
+    	}
 
-      // Update the outer dimensions.
-      svg .attr("width", width)
-          .attr("height", height);
-
-      // Update the inner dimensions.
-      var g = svg.select("g")
-          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-      // Update the area path.
-      // g.select(".area")
-      //     .attr("d", area.y0(y.range()[0]));
-      g.selectAll("circle")
-	    .append("g")
-	    .data(data)
-	        .enter().append("circle")
-	        .attr("class", "dot")
-	        .attr("r", 8)
-	        .attr("transform", translate);
-      // // Update the line path.
-      g.select(".line")
-          .attr("d", line);
-
-      // // Update the x-axis.
-      // g.select(".x.axis")
-      //     .attr("transform", "translate(0," + y.range()[0] + ")")
-      //     .call(xAxis);
     });
   }
 
