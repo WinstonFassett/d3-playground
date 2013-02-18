@@ -14,7 +14,10 @@ function zoomChart(){
         .domain([0, 1])
         .range([height, 0]);
     function chart(selection, options){
-      selection.each(function(d, i) {
+      selection.each(function(data, i) {
+      // generate chart here; `d` is the data and `this` is the element
+        var svg = d3.select(this)
+
         // axes
         var tickPadding = 10;
         var xLabel = "X axis",
@@ -34,7 +37,7 @@ function zoomChart(){
             .y(function(d) { return y(d.y); });
 
         // build svg
-        var svg = d3.select(this)
+        svg = svg
             .attr("class", "chart")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
