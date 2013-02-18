@@ -32,7 +32,7 @@ function zoomChart(opts) {
     // load options
     width = options.width || width;
     height = options.height || height;
-
+    var pRadius = options.pointRadius || 8;
     console.log('chart', arguments);
     selection.each(function(data) {
       // Convert data to standard representation greedily;
@@ -88,7 +88,7 @@ function zoomChart(opts) {
         .data(function(d){return d})
             .enter().append("circle")
             .attr("class", "dot")
-            .attr("r", 8)
+            .attr("r", pRadius)
             .attr("transform", translate);
 
       draw();
@@ -130,7 +130,8 @@ function zoomChart(opts) {
                 // .attr("transform", "translate(0," + y.range()[0] + ")")
                 
 
-          dots.attr("transform", translate);        
+          dots.attr("transform", translate);   
+          dots.attr("r", function(d){return pRadius;});     
       }
 
     	function translate(d) {
