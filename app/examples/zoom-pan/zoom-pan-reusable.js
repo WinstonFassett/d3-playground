@@ -28,12 +28,12 @@ function zoomChart(){
         var tickPadding = 10;
         var xLabel = "X axis",
             yLabel = "Y axis";
-        var xAxis = nv.models.axis().axisLabel(xLabel).showMaxMin(false) // d3.svg.axis()
+        var xAxis = d3.svg.axis()
             .scale(x)
             .orient("bottom")
             .tickSize(-height)
             .tickPadding(tickPadding);
-        var yAxis =   nv.models.axis().axisLabel(yLabel).showMaxMin(false) // d3.svg.axis()
+        var yAxis =   d3.svg.axis() // nv.models.axis().axisLabel(yLabel).showMaxMin(false) 
             .scale(y)
             .orient("left")
             .tickSize(-width)
@@ -41,6 +41,12 @@ function zoomChart(){
         var line = d3.svg.line()
             .x(function(d) { return x(d.x); })
             .y(function(d) { return y(d.y); });
+
+        var graphZoom = d3.behavior.zoom().x(x).y(y).scaleExtent([.2, 5]).on("zoom", 
+            function(){
+                console.log('zooming', d3.event);
+                zoom();
+            });
 
         var svg = d3.select(this).selectAll("svg").data([data]);
 
@@ -52,7 +58,7 @@ function zoomChart(){
                 .attr("height", height + margin.top + margin.bottom)
                 .append("g")
                   .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-                  .call(d3.behavior.zoom().x(x).y(y).scaleExtent([.2, 5]).on("zoom", zoom))
+                .call(graphZoom)
         
         // build svg
         var current = gEnter;
@@ -79,16 +85,38 @@ function zoomChart(){
         var linePath = graph.append("path")
             .attr("class", "line")
             .attr("d", line);
+
+        var drag = d3.behavior.drag()
+
+            .on("drag", function(d,i) {
+                var dx = x.invert(d3.event.x + d3.event.dx) - x.invert(d3.event.x);
+                var dy = y.invert(d3.event.y + d3.event.dy) - y.invert(d3.event.y);
+                console.log('drag', dx, dy)
+                // d.x += dx;
+                d.y += dy;
+                zoom();
+            });
+
         var dots = graph.selectAll("circle")
             .append("g")
             .data(data)
                 .enter().append("circle")
                 .attr("class", "dot")
                 .attr("r", radius)
-                .attr("transform", translate);
+                .attr("transform", translate)
+                // .call(d3.behavior.drag().on("drag", function(){
+                //     console.log('dragging', d3.event, this)
+                // }));
+                .on("touchstart", function(){
+                    console.log('touchstart', d3.event)
+                    // prevents parent pan/zoom event handlers
+                    d3.event.stopPropagation();
+
+                })
+            .call(drag)
         // svg.yAxis.select('nv-axislabel').attr('x',function(d){return d+10})
         function translate(d) {
-            console.log('translate', d)
+            // console.log('translate', d)
           var rtn = "translate(" + x(d.x) + "," + y(d.y) + ")";
           return rtn
         }
