@@ -66,8 +66,8 @@ module.exports = function( grunt ) {
       reload: {
         files: [
           'app/**/*.html',
-          'app/styles/**/*.css',
-          'app/scripts/**/*.js',
+          'app/**/*.css',
+          'app/**/*.js',
           'app/images/**/*'
         ],
         tasks: 'reload'
@@ -79,7 +79,7 @@ module.exports = function( grunt ) {
     lint: {
       files: [
         'Gruntfile.js',
-        'app/scripts/**/*.js',
+        'app/**/*.js',
         'spec/**/*.js'
       ]
     },
