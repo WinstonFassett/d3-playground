@@ -1,7 +1,11 @@
 
 
 function zoomChart(){
-
+    var defaultColor = function() {
+        var colors = d3.scale.category20().range();
+        return function(d, i) { return d.color || colors[i % colors.length] };
+    }
+    var color = defaultColor();
 
     var margin = {top: 50, right: 10, bottom: 50, left: 70},
         width = 960 - margin.left - margin.right,
@@ -14,8 +18,20 @@ function zoomChart(){
         .domain([0, 1])
         .range([height, 0]);
     var radius = 8;
+
+    var getX = function(d) { return d.x } // accessor to get the x value from a data point
+      , getY = function(d) { return d.y } // accessor to get the y value from a data point
+      , defined = function(d,i) { return !isNaN(getY(d,i)) && getY(d,i) !== null } // allows a line to be not continuous when it is not defined
+    
+
+    function returnValues(d) { 
+        console.log('get values array', d)
+        return [d.values]; 
+    }
+
     function chart(selection, options){
       selection.each(function(data, i) {
+        console.log('chart', data, i)
       // generate chart here; `d` is the data and `this` is the element
         // var svg = d3.select(this)
         if(options){
@@ -23,7 +39,7 @@ function zoomChart(){
             width = options.width || width;
             height = options.height || height;
         }
-        console.log('chart', arguments)
+        // console.log('chart', arguments)
         // axes
         var tickPadding = 10;
         var xLabel = "X axis",
@@ -80,14 +96,36 @@ function zoomChart(){
             .attr("class", "points")
             .attr("width", width)   
             .attr("height", height) 
-            .append("g")    
-        // add line
-        var linePath = graph.append("path")
+            .append("g")   
+
+        var groups = graph.selectAll('.nv-group')
+          .data(function(d) { return d }, function(d) { return d.key });
+        groups.enter().append('g')
+          .style('stroke-opacity', 1e-6)
+          .style('fill-opacity', 1e-6);
+        d3.transition(groups.exit())
+          .style('stroke-opacity', 1e-6)
+          .style('fill-opacity', 1e-6)
+          .remove();
+        groups
+          .attr('class', function(d,i) { return 'nv-group nv-series-' + i })
+          .classed('hover', function(d) { return d.hover })
+          .style('fill', function(d,i){ return color(d, i) })
+          .style('stroke', function(d,i){ return color(d, i)});
+        d3.transition(groups)
+          .style('stroke-opacity', 1)
+          .style('fill-opacity', .9);
+
+
+
+        var linePaths = groups.selectAll(".line")
+            .data(data, returnValues);
+        var getLineValues = function(d){ return line(d.values); }
+        linePaths.enter().append("path")
             .attr("class", "line")
-            .attr("d", line);
+            .attr("d", getLineValues);
 
         var drag = d3.behavior.drag()
-
             .on("drag", function(d,i) {
                 var dx = x.invert(d3.event.x + d3.event.dx) - x.invert(d3.event.x);
                 var dy = y.invert(d3.event.y + d3.event.dy) - y.invert(d3.event.y);
@@ -97,9 +135,11 @@ function zoomChart(){
                 zoom();
             });
 
-        var dots = graph.selectAll("circle")
+        var dotPaths = groups.selectAll("circle")
             .append("g")
-            .data(data)
+            .data(returnValues)
+        var circlePaths = dotPaths
+            .data(function(d){ console.log('d',d); return d.values})
                 .enter().append("circle")
                 .attr("class", "dot")
                 .attr("r", radius)
@@ -123,8 +163,8 @@ function zoomChart(){
         function zoom() {
             svg.xAxis.call(xAxis);
             svg.yAxis.call(yAxis);
-            linePath.attr("d", line);
-            dots.attr("transform", translate);
+            linePaths.attr("d", getLineValues);
+            circlePaths.attr("transform", translate);
         }
 
       });

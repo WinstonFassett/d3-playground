@@ -11,10 +11,15 @@
 <script src="zoom-pan-reusable.js"></script>
 <script>
 var chart = zoomChart();
-var data =  
+var sin =  
 	d3.range(40).map(function(i) {
 	  return {x: i / 39, y: (Math.sin(i / 3) + 2) / 4};
 	})
+var data = [
+	{ key: 'sin', values: sin },
+
+	{ key: 'cosin', values: sin.map(function(d){ return { x: d.x +.1, y: d.y-.1} }) }
+];
 var svg = d3.select("body").append("svg")
   .datum(data)
   .call(chart);
