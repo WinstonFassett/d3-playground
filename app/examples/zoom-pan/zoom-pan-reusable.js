@@ -119,8 +119,8 @@ function zoomChart(){
 
 
         var linePaths = groups.selectAll(".line")
-            .data(data, returnValues);
-        var getLineValues = function(d){ return line(d.values); }
+            .data(returnValues);
+        var getLineValues = function(d){ return line(d); }
         linePaths.enter().append("path")
             .attr("class", "line")
             .attr("d", getLineValues);
