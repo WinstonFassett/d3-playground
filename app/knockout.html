@@ -24,8 +24,8 @@
   <input type="number" step=".2" data-bind="value: pointRadius" placeholder="point radius" />
 </div>
 <div data-bind="if: datatable">
-  <svg class="chart" data-bind="d3:{ datum: datatable().toJS().rows, chart: chartOptions }, attr: {height: chartOptions.height, width: chartOptions.width}">
-  </svg>
+  <div data-bind="d3:{ datum: datatable().toJS().rows, chart: chartOptions }">
+  </div>
 </div>
 
 <div data-bind="with: datatable">

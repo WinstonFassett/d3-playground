@@ -1,5 +1,5 @@
 body { background: #4d4d4d; }
-
+.nvtooltip { color: black;}
 svg.chart .background { fill:#4d4d4d }
 svg.chart  rect {
    fill: #ddd;

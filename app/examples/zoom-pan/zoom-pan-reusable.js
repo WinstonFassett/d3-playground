@@ -13,11 +13,17 @@ function zoomChart(){
     var y = d3.scale.linear()
         .domain([0, 1])
         .range([height, 0]);
+    var radius = 8;
     function chart(selection, options){
       selection.each(function(data, i) {
       // generate chart here; `d` is the data and `this` is the element
         // var svg = d3.select(this)
-        
+        if(options){
+            margin = options.margin || margin;
+            width = options.width || width;
+            height = options.height || height;
+        }
+        console.log('chart', arguments)
         // axes
         var tickPadding = 10;
         var xLabel = "X axis",
@@ -38,16 +44,19 @@ function zoomChart(){
 
         var svg = d3.select(this).selectAll("svg").data([data]);
 
-        var gEnter = svg.enter()
+        var svgEnter = svg.enter()
                 .append("svg")
+        var gEnter = svgEnter
                 .attr("class", "chart")
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
                 .append("g")
                   .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
                   .call(d3.behavior.zoom().x(x).y(y).scaleExtent([.2, 5]).on("zoom", zoom))
-        // add rect that seems to be required for zoom to work(?)   
+        
+        // build svg
         var current = gEnter;
+        // add rect that seems to be required for zoom to work(?)   
         var rect = current.append("rect")
             .attr("class", "background")
             .attr("width", width)
@@ -61,21 +70,21 @@ function zoomChart(){
             .attr("class", "y axis")
             .call(yAxis);
         // add SVG to contain graph so it doesn't overflow
-        svg.graph = current.append("svg") 
+        var graph = current.append("svg") 
             .attr("class", "points")
             .attr("width", width)   
             .attr("height", height) 
             .append("g")    
         // add line
-        var linePath = svg.graph.append("path")
+        var linePath = graph.append("path")
             .attr("class", "line")
             .attr("d", line);
-        var dots = svg.graph.selectAll("circle")
+        var dots = graph.selectAll("circle")
             .append("g")
             .data(data)
                 .enter().append("circle")
                 .attr("class", "dot")
-                .attr("r", 8)
+                .attr("r", radius)
                 .attr("transform", translate);
         // svg.yAxis.select('nv-axislabel').attr('x',function(d){return d+10})
         function translate(d) {
@@ -90,9 +99,6 @@ function zoomChart(){
             dots.attr("transform", translate);
         }
 
-
-
-        // generate chart here; `d` is the data and `this` is the element
       });
 
     }
